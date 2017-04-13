@@ -13,13 +13,6 @@ public class News {
     private String newsUrl;
     private Bitmap newsPic;
 
-//    public News(String newsTitle,String newsTime,String newsUrl,Bitmap newsPic){
-//        this.newsTitle = newsTitle;
-//        this.newsTime = newsTime;
-//        this.newsUrl = newsUrl;
-//        this.newsPic = newsPic;
-//    }
-
     public void setNewsTitle(String newsTitle){this.newsTitle = newsTitle;}
     public void setNewsTime(String newsTime){this.newsTime = newsTime;}
     public void setNewsUrl(String newsUrl){this.newsUrl = newsUrl;}

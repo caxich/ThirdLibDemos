@@ -1,4 +1,4 @@
-package com.cxc.swiperefreshlayout;
+package com.cxc.swiperefreshlayout.ui;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,8 +7,11 @@ import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.cxc.swiperefreshlayout.R;
+import com.cxc.swiperefreshlayout.adapter.NewsAdapter;
 import com.cxc.swiperefreshlayout.bean.News;
 
 import org.jsoup.Jsoup;
@@ -26,6 +29,8 @@ public class MainActivity extends AppCompatActivity
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private List<News> newsList = new ArrayList<>();
+    private NewsAdapter newsAdapter;
+    private ListView lv_news;
 
     public static final int REFRESH_FAIL = 0;//获取html失败
     public static final int REFRESH_SUCCESS = 1;//解析html成功
@@ -50,12 +55,18 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initData();
         initView();
+        initData();
     }
 
     private void initView(){
         initSwipeRefreshLayout();
+
+        lv_news = (ListView)findViewById(R.id.lv_news);
+    }
+
+    private void ReInitView(){
+        swipeRefreshLayout.setOnRefreshListener(this);
     }
 
     private void initSwipeRefreshLayout(){
@@ -63,7 +74,6 @@ public class MainActivity extends AppCompatActivity
         swipeRefreshLayout.setColorSchemeResources(
                 R.color.swiperefresh_color1,R.color.swiperefresh_color2,
                 R.color.swiperefresh_color3,R.color.swiperefresh_color4);
-        swipeRefreshLayout.setOnRefreshListener(this);
     }
 
     @Override
@@ -95,17 +105,21 @@ public class MainActivity extends AppCompatActivity
                 //从url读取图片，耗时，放在最开始处理
                 Elements elements4 = element.getElementsByTag("img");
                 Bitmap img = null;
+                //获取新闻图片
                 if(elements4.size()>0){
                     String img_url = elements4.get(0).attr("defers");
                     URL url = new URL(img_url);
                     img = BitmapFactory.decodeStream(url.openStream());
                 }
 
+                //获取新闻链接及标题
                 Elements elements2 = element.getElementsByTag("a");
                 if(elements2.size()>0){
                     news.setNewsUrl(elements2.get(0).attr("href"));
                     news.setNewsTitle(elements2.get(0).text());
                 }
+
+                //获取新闻时间
                 Elements elements3 = element.getElementsByClass("time");
                 if(elements3.size()>0){
                     String str_tmp = elements3.get(0).text();
@@ -133,6 +147,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void showNewsList(){
-        Toast.makeText(MainActivity.this,newsList.get(7).getNewsTitle(),Toast.LENGTH_SHORT).show();
+
+        newsAdapter = new NewsAdapter(MainActivity.this,R.layout.listview_news,newsList);
+        lv_news.setAdapter(newsAdapter);
+
+        ReInitView();
+
     }
 }
