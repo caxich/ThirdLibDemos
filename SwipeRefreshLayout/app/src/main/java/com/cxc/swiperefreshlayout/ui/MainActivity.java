@@ -7,6 +7,7 @@ import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -25,15 +26,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements SwipeRefreshLayout.OnRefreshListener{
+        implements SwipeRefreshLayout.OnRefreshListener,AbsListView.OnScrollListener{
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private List<News> newsList = new ArrayList<>();
     private NewsAdapter newsAdapter;
     private ListView lv_news;
+    private int currentPage = 0;
 
+    //子线程消息标志
     public static final int REFRESH_FAIL = 0;//获取html失败
     public static final int REFRESH_SUCCESS = 1;//解析html成功
+
+    //下拉状态标志
+    public static final int STATE_NONE = 0;
+    public static final int STATE_REFRESH = 1;
+    public static final int STATE_LOADMORE = 2;
+    public static final int STATE_NOMORE = 3;
+    public static final int STATE_PRESSNONE = 4;// 正在下拉但还没有到刷新的状态
+    public static int swipeRefreshState = STATE_NONE;
 
     private Handler handler = new Handler(){
         @Override
@@ -56,17 +67,14 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         initView();
-        initData();
+        //initData();
     }
 
     private void initView(){
         initSwipeRefreshLayout();
 
         lv_news = (ListView)findViewById(R.id.lv_news);
-    }
-
-    private void ReInitView(){
-        swipeRefreshLayout.setOnRefreshListener(this);
+        lv_news.setOnScrollListener(this);
     }
 
     private void initSwipeRefreshLayout(){
@@ -74,11 +82,54 @@ public class MainActivity extends AppCompatActivity
         swipeRefreshLayout.setColorSchemeResources(
                 R.color.swiperefresh_color1,R.color.swiperefresh_color2,
                 R.color.swiperefresh_color3,R.color.swiperefresh_color4);
+        swipeRefreshLayout.setOnRefreshListener(this);
     }
 
     @Override
     public void onRefresh() {
         Toast.makeText(MainActivity.this,"refresh start",Toast.LENGTH_SHORT).show();
+
+        //判断当前是否正在刷新，如果是，则退出
+        if(swipeRefreshState == STATE_REFRESH){
+            return;
+        }
+
+        //下拉刷新，将列表定位到最顶部
+        lv_news.setSelection(0);
+
+//        if(swipeRefreshLayout != null){
+//            //显示刷新动画
+//            swipeRefreshLayout.setRefreshing(true);
+//            //防止重复刷新，暂时禁用
+//            swipeRefreshLayout.setEnabled(false);
+//        }
+
+        //下拉刷新时，分页值为0
+//        currentPage = 0;
+
+        swipeRefreshState = STATE_REFRESH;
+        initData();
+
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if(newsAdapter == null || newsAdapter.getCount() == 0){
+            return;
+        }
+
+        switch (scrollState){
+            case SCROLL_STATE_IDLE:
+                if(view.getLastVisiblePosition() == (view.getCount()-1)){
+                    Toast.makeText(MainActivity.this,"to bott!",Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
     }
 
     private void initData(){
@@ -151,7 +202,8 @@ public class MainActivity extends AppCompatActivity
         newsAdapter = new NewsAdapter(MainActivity.this,R.layout.listview_news,newsList);
         lv_news.setAdapter(newsAdapter);
 
-        ReInitView();
-
+        swipeRefreshLayout.setRefreshing(false);
+        swipeRefreshLayout.setEnabled(true);
+        swipeRefreshState = STATE_NONE;
     }
 }
