@@ -21,6 +21,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.net.InterfaceAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,8 @@ public class MainActivity extends AppCompatActivity
 
     //子线程消息标志
     public static final int REFRESH_FAIL = 0;//获取html失败
-    public static final int REFRESH_SUCCESS = 1;//解析html成功
+    public static final int REFRESH_SUCCESS = 1;//下拉刷新成功
+    public static final int ADD_SUCCESS = 2;//上拉加载成功
 
     //下拉状态标志
     public static final int STATE_NONE = 0;
@@ -54,6 +56,9 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case REFRESH_SUCCESS:
                     showNewsList();
+                    break;
+                case ADD_SUCCESS:
+                    addNewsList();
                     break;
                 default:
                     break;
@@ -121,7 +126,23 @@ public class MainActivity extends AppCompatActivity
         switch (scrollState){
             case SCROLL_STATE_IDLE:
                 if(view.getLastVisiblePosition() == (view.getCount()-1)){
-                    Toast.makeText(MainActivity.this,"to bott!",Toast.LENGTH_SHORT).show();
+
+                    Toast.makeText(MainActivity.this,Integer.toString(currentPage),Toast.LENGTH_SHORT).show();
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            List<News> list_tmp = new ArrayList<News>();
+                            list_tmp = parseHtml("http://www.jy510.com/a/houseinfo/kpyh/"
+                                    +Integer.toString(currentPage) +".html");
+                            newsList.addAll(list_tmp);
+
+                            Message msg = new Message();
+                            msg.what = ADD_SUCCESS;
+                            msg.obj = "add success";
+                            handler.sendMessage(msg);
+                        }
+                    }).start();
                 }
                 break;
         }
@@ -136,15 +157,25 @@ public class MainActivity extends AppCompatActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
-                parseHtml();
+                List<News> list_tmp = new ArrayList<News>();
+                list_tmp = parseHtml("http://www.jy510.com/a/houseinfo/kpyh/");
+                newsList.addAll(list_tmp);
+
+                Message msg = new Message();
+                msg.what = REFRESH_SUCCESS;
+                msg.obj = "refresh success";
+                handler.sendMessage(msg);
+
             }
         }).start();
     }
 
-    private void parseHtml(){
+    private List<News> parseHtml(String url_str){
+        List<News> tmp_list = new ArrayList<>();
+
         try{
             Document document;
-            document = Jsoup.connect("http://www.jy510.com/a/houseinfo/kpyh/").get();
+            document = Jsoup.connect(url_str).get();
             Elements elements = document.select("#listZone");
             Document document1 = Jsoup.parse(elements.toString());
             Elements elements1 = document1.getElementsByClass("tpWrap");
@@ -181,23 +212,24 @@ public class MainActivity extends AppCompatActivity
                 //图片放在最后赋值
                 news.setNewsPic(img);
 
-                newsList.add(news);
+                tmp_list.add(news);
             }
 
-            Message msg = new Message();
-            msg.what = REFRESH_SUCCESS;
-            msg.obj = "refresh success";
-            handler.sendMessage(msg);
         }catch (IOException ie){
-            Message msg = new Message();
-            msg.what = REFRESH_FAIL;
-            msg.obj = "refresh failed";
-            handler.sendMessage(msg);
+//            Message msg = new Message();
+//            msg.what = REFRESH_FAIL;
+//            msg.obj = "refresh failed";
+//            handler.sendMessage(msg);
             ie.printStackTrace();
         }
+
+        return tmp_list;
+
     }
 
     private void showNewsList(){
+
+        currentPage++;
 
         newsAdapter = new NewsAdapter(MainActivity.this,R.layout.listview_news,newsList);
         lv_news.setAdapter(newsAdapter);
@@ -205,5 +237,11 @@ public class MainActivity extends AppCompatActivity
         swipeRefreshLayout.setRefreshing(false);
         swipeRefreshLayout.setEnabled(true);
         swipeRefreshState = STATE_NONE;
+    }
+
+    private void addNewsList(){
+        currentPage++;
+
+        newsAdapter.notifyDataSetChanged();
     }
 }
