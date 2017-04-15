@@ -127,22 +127,29 @@ public class MainActivity extends AppCompatActivity
             case SCROLL_STATE_IDLE:
                 if(view.getLastVisiblePosition() == (view.getCount()-1)){
 
-                    Toast.makeText(MainActivity.this,Integer.toString(currentPage),Toast.LENGTH_SHORT).show();
+                    if(swipeRefreshState == STATE_NONE) {
+                        Toast.makeText(MainActivity.this, Integer.toString(currentPage), Toast.LENGTH_SHORT).show();
+                        //？动画没有展示
+//                        swipeRefreshLayout.setRefreshing(true);
+//                        swipeRefreshLayout.setEnabled(false);
+                        swipeRefreshState = STATE_REFRESH;
 
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            List<News> list_tmp = new ArrayList<News>();
-                            list_tmp = parseHtml("http://www.jy510.com/a/houseinfo/kpyh/"
-                                    +Integer.toString(currentPage) +".html");
-                            newsList.addAll(list_tmp);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
 
-                            Message msg = new Message();
-                            msg.what = ADD_SUCCESS;
-                            msg.obj = "add success";
-                            handler.sendMessage(msg);
-                        }
-                    }).start();
+                                    List<News> list_tmp = new ArrayList<News>();
+                                    list_tmp = parseHtml("http://www.jy510.com/a/houseinfo/kpyh/"
+                                            +Integer.toString(currentPage) +".html");
+                                    newsList.addAll(list_tmp);
+                                    Message msg = new Message();
+                                    msg.what = ADD_SUCCESS;
+                                    msg.obj = "add success";
+                                    handler.sendMessage(msg);
+
+                            }
+                        }).start();
+                    }
                 }
                 break;
         }
@@ -240,8 +247,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void addNewsList(){
+
         currentPage++;
 
         newsAdapter.notifyDataSetChanged();
+
+//        swipeRefreshLayout.setRefreshing(false);
+//        swipeRefreshLayout.setEnabled(true);
+        swipeRefreshState = STATE_NONE;
     }
 }
