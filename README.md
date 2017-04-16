@@ -1,5 +1,5 @@
-# android 第三方库例程
-android开发练习
+# android 常见功能例程
+android第三方库及常见功能实现的练习
 
 ---
 
