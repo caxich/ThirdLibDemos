@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity
     private List<News> newsList = new ArrayList<>();
     private NewsAdapter newsAdapter;
     private ListView lv_news;
-    private int currentPage = 0;
+    private int currentPage = 1;
 
     //子线程消息标志
     public static final int REFRESH_FAIL = 0;//获取html失败
@@ -43,9 +43,6 @@ public class MainActivity extends AppCompatActivity
     //下拉状态标志
     public static final int STATE_NONE = 0;
     public static final int STATE_REFRESH = 1;
-    public static final int STATE_LOADMORE = 2;
-    public static final int STATE_NOMORE = 3;
-    public static final int STATE_PRESSNONE = 4;// 正在下拉但还没有到刷新的状态
     public static int swipeRefreshState = STATE_NONE;
 
     private Handler handler = new Handler(){
@@ -72,7 +69,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         initView();
-        //initData();
     }
 
     private void initView(){
@@ -92,8 +88,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRefresh() {
-        Toast.makeText(MainActivity.this,"refresh start",Toast.LENGTH_SHORT).show();
-
         //判断当前是否正在刷新，如果是，则退出
         if(swipeRefreshState == STATE_REFRESH){
             return;
@@ -102,19 +96,8 @@ public class MainActivity extends AppCompatActivity
         //下拉刷新，将列表定位到最顶部
         lv_news.setSelection(0);
 
-//        if(swipeRefreshLayout != null){
-//            //显示刷新动画
-//            swipeRefreshLayout.setRefreshing(true);
-//            //防止重复刷新，暂时禁用
-//            swipeRefreshLayout.setEnabled(false);
-//        }
-
-        //下拉刷新时，分页值为0
-//        currentPage = 0;
-
         swipeRefreshState = STATE_REFRESH;
         initData();
-
     }
 
     @Override
@@ -126,18 +109,15 @@ public class MainActivity extends AppCompatActivity
         switch (scrollState){
             case SCROLL_STATE_IDLE:
                 if(view.getLastVisiblePosition() == (view.getCount()-1)){
-
                     if(swipeRefreshState == STATE_NONE) {
-                        Toast.makeText(MainActivity.this, Integer.toString(currentPage), Toast.LENGTH_SHORT).show();
-                        //？动画没有展示
-//                        swipeRefreshLayout.setRefreshing(true);
-//                        swipeRefreshLayout.setEnabled(false);
+//                        Toast.makeText(MainActivity.this, Integer.toString(currentPage), Toast.LENGTH_SHORT).show();
+                        //显示刷新动画
+                        swipeRefreshLayout.setRefreshing(true);
                         swipeRefreshState = STATE_REFRESH;
 
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-
                                     List<News> list_tmp = new ArrayList<News>();
                                     list_tmp = parseHtml("http://www.jy510.com/a/houseinfo/kpyh/"
                                             +Integer.toString(currentPage) +".html");
@@ -146,7 +126,6 @@ public class MainActivity extends AppCompatActivity
                                     msg.what = ADD_SUCCESS;
                                     msg.obj = "add success";
                                     handler.sendMessage(msg);
-
                             }
                         }).start();
                     }
@@ -172,7 +151,6 @@ public class MainActivity extends AppCompatActivity
                 msg.what = REFRESH_SUCCESS;
                 msg.obj = "refresh success";
                 handler.sendMessage(msg);
-
             }
         }).start();
     }
@@ -236,14 +214,18 @@ public class MainActivity extends AppCompatActivity
 
     private void showNewsList(){
 
-        currentPage++;
+        if(newsList.size()>0){
+            currentPage++;
 
-        newsAdapter = new NewsAdapter(MainActivity.this,R.layout.listview_news,newsList);
-        lv_news.setAdapter(newsAdapter);
+            newsAdapter = new NewsAdapter(MainActivity.this,R.layout.listview_news,newsList);
+            lv_news.setAdapter(newsAdapter);
 
-        swipeRefreshLayout.setRefreshing(false);
-        swipeRefreshLayout.setEnabled(true);
-        swipeRefreshState = STATE_NONE;
+            //关闭刷新动画
+            swipeRefreshLayout.setRefreshing(false);
+            swipeRefreshState = STATE_NONE;
+        }else {
+            Toast.makeText(MainActivity.this,"网络错误，请重试！",Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void addNewsList(){
@@ -252,8 +234,8 @@ public class MainActivity extends AppCompatActivity
 
         newsAdapter.notifyDataSetChanged();
 
-//        swipeRefreshLayout.setRefreshing(false);
-//        swipeRefreshLayout.setEnabled(true);
+        //关闭刷新动画
+        swipeRefreshLayout.setRefreshing(false);
         swipeRefreshState = STATE_NONE;
     }
 }
