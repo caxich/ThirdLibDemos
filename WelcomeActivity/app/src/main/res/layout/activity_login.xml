@@ -12,6 +12,6 @@
         android:gravity="center"
         android:textSize="20sp"
         android:textColor="@color/colorPrimary"
-        android:text="@string/hint" />
+        android:text="@string/login" />
 
 </RelativeLayout>
