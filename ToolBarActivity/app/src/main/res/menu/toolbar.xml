@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--ifRoom为空间足够时显示-->
+    <item
+        android:id="@+id/tb_add"
+        android:icon="@mipmap/actionbar_icon_add"
+        android:title="@string/tb_add"
+        app:showAsAction="ifRoom"
+        />
+
+    <!--always为始终显示-->
+    <item
+        android:id="@+id/tb_search"
+        android:icon="@mipmap/actionbar_search_icon"
+        android:title="@string/tb_search"
+        app:showAsAction="always"
+        />
+
+    <!--never为始终隐藏-->
+    <item
+        android:id="@+id/tb_menu"
+        android:icon="@mipmap/actionbar_more_icon_normal"
+        android:title="@string/tb_menu"
+        app:showAsAction="never"
+        />
+
+</menu>

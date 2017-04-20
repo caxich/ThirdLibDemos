@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">ToolBarActivity</string>
     <string name="main">MAIN</string>
+    <string name="tb_add">ADD</string>
+    <string name="tb_search">SEARCH</string>
+    <string name="tb_menu">MENU</string>
 </resources>
