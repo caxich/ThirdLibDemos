@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ASimpleCacheDemo</string>
+    <string name="read">读取缓存</string>
+    <string name="save">保存缓存</string>
+</resources>
