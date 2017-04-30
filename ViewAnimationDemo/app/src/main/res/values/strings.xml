@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">ViewAnimationDemo</string>
-    <string name="btn_text">带动画效果的按钮</string>
+    <string name="btn_text">动画按钮</string>
 </resources>

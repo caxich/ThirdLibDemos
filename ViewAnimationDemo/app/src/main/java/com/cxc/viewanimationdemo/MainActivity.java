@@ -19,6 +19,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView(){
         Button btn_ani = (Button)findViewById(R.id.btn_ani);
+        //XML文件实现的动画
+//        Animation animation = AnimationUtils.loadAnimation(this,R.anim.animation_text);
+//        btn_ani.startAnimation(animation);
+        //代码实现的动画
         AlphaAnimation alphaAnimation = new AlphaAnimation(0,1);
         alphaAnimation.setDuration(2000);
         btn_ani.startAnimation(alphaAnimation);

@@ -8,9 +8,11 @@
 
     <Button
         android:id="@+id/btn_ani"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:text="@string/btn_text"
         android:textColor="#ffffff"
         android:textSize="16sp"/>
