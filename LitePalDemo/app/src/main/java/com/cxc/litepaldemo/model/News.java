@@ -1,12 +1,14 @@
 package com.cxc.litepaldemo.model;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.Date;
 
 /**
  * Created by cxc on 2017/5/7.
  */
 
-public class News {
+public class News extends DataSupport{
     private int id;
 
     private String title;
