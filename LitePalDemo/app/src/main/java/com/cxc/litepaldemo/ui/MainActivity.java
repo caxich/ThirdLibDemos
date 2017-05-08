@@ -1,5 +1,6 @@
 package com.cxc.litepaldemo.ui;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,11 +24,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initData();
+        //生成数据库及插入一条或多条数据
+//        dataInsert();
+        //数据修改
+//        dataUpdate();
+        //数据删除
+        dataDelete();
     }
 
-    private void initData(){
+    private void dataInsert(){
+        //生成数据库
         SQLiteDatabase db = Connector.getDatabase();
+
         //插入一条数据
         News news = new News();
         news.setTitle("新闻标题1");
@@ -52,4 +60,16 @@ public class MainActivity extends AppCompatActivity {
         Log.i("LitePal",Integer.toString(news2.getId()));
         Log.i("LitePal",news2.getPublishDate().toString());
     }
+
+    private void dataUpdate(){
+        ContentValues values = new ContentValues();
+        values.put("title","更新的新闻标题");
+        //如不写判断条件则会修改所有记录
+        DataSupport.updateAll(News.class,values,"title = ? and id = ?","新闻标题1","1");
+    }
+
+    private void dataDelete(){
+        DataSupport.deleteAll(News.class,"title = ? and id = ?","新闻标题1","3");
+    }
+
 }
