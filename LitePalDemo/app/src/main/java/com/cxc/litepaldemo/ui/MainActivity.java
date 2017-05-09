@@ -2,6 +2,7 @@ package com.cxc.litepaldemo.ui;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,7 +30,9 @@ public class MainActivity extends AppCompatActivity {
         //数据修改
 //        dataUpdate();
         //数据删除
-        dataDelete();
+//        dataDelete();
+        //数据查询
+        dataQuery();
     }
 
     private void dataInsert(){
@@ -72,4 +75,18 @@ public class MainActivity extends AppCompatActivity {
         DataSupport.deleteAll(News.class,"title = ? and id = ?","新闻标题1","3");
     }
 
+    //select * from users where id > 0 order by publishDate desc limit 1,10;
+    private void dataQuery(){
+        List<News> newsList =  DataSupport.where("id > ?","1")
+                .order("publishdate desc")
+                .limit(10)
+                .offset(1)
+                .find(News.class);
+
+        Log.i("LitePal",Integer.toString(newsList.size()));
+
+        for(News news:newsList){
+            Log.i("LitePal",news.getTitle());
+        }
+    }
 }
