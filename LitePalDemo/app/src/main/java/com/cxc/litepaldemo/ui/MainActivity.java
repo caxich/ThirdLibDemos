@@ -32,7 +32,9 @@ public class MainActivity extends AppCompatActivity {
         //数据删除
 //        dataDelete();
         //数据查询
-        dataQuery();
+//        dataQuery();
+        //聚合函数
+        dataFuncQuery();
     }
 
     private void dataInsert(){
@@ -88,5 +90,10 @@ public class MainActivity extends AppCompatActivity {
         for(News news:newsList){
             Log.i("LitePal",news.getTitle());
         }
+    }
+
+    private void dataFuncQuery(){
+        int rlt = DataSupport.count(News.class);
+        Log.i("LitePal",Integer.toString(rlt));
     }
 }
