@@ -21,4 +21,4 @@ android第三方库及常见功能实现的练习
 - 2017-04-30　**系统内置View动画**（[任玉刚《Android开发艺术探索》](http://blog.csdn.net/singwhatiwanna/article/details/38426471)）
 - 2017-05-01　**帧动画**（[任玉刚《Android开发艺术探索》](http://blog.csdn.net/singwhatiwanna/article/details/38426471)）
 - 2017-05-07　**SQLite数据库框架LitePal的使用**（[参考资料1](http://blog.csdn.net/guolin_blog/article/details/38556989)、[参考资料2 assets目录详解](http://www.jianshu.com/p/5974fcf88170)）
-- 2017-05-01　**RecyclerView使用**（[参考资料1](http://blog.csdn.net/dmk877/article/details/50816933)）
+- 2017-05-10　**RecyclerView使用**（[参考资料1](http://blog.csdn.net/dmk877/article/details/50816933)）
