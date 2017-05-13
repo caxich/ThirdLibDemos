@@ -39,13 +39,20 @@ public class MainActivity extends AppCompatActivity {
         //设置布局管理器
         recv.setLayoutManager(linlayout);
         //垂直布局
-        linlayout.setOrientation(OrientationHelper.VERTICAL);
+//        linlayout.setOrientation(OrientationHelper.VERTICAL);
+        linlayout.setOrientation(OrientationHelper.HORIZONTAL);
 
         recvAdapter = new RecvAdapter(MainActivity.this,list);
         //设置adapter
         recv.setAdapter(recvAdapter);
-//        //设置分割线
+
+        //        //设置分割线
 //        recv.addItemDecoration();
+
+        //垂直分割线
+//        recv.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL_LIST));
+        recv.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.HORIZONTAL_LIST));
+
 //        //设置增加或删除条目的动画
 //        recv.setItemAnimator(new DefaultItemAnimator());
     }
