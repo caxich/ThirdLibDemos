@@ -18,6 +18,7 @@ public class RecvAdapter extends RecyclerView.Adapter<RecvAdapter.recvViewHolder
     private List<String> mDatas;
     private Context mContext;
     private LayoutInflater inflater;
+    private OnItemClickListener onItemClickListener;
 
     public RecvAdapter(Context context,List<String> datas){
         this.mContext = context;
@@ -33,8 +34,25 @@ public class RecvAdapter extends RecyclerView.Adapter<RecvAdapter.recvViewHolder
     }
 
     @Override
-    public void onBindViewHolder(recvViewHolder holder, int position) {
+    public void onBindViewHolder(final recvViewHolder holder, final int position) {
         holder.tv.setText(mDatas.get(position));
+
+        if(this.onItemClickListener != null){
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickListener.onClick(position);
+                }
+            });
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    onItemClickListener.onLongClick(position);
+                    return false;
+                }
+            });
+        }
     }
 
     @Override
@@ -49,5 +67,14 @@ public class RecvAdapter extends RecyclerView.Adapter<RecvAdapter.recvViewHolder
             super(view);
             tv = (TextView)view.findViewById(R.id.tv_recv_item);
         }
+    }
+
+    public interface OnItemClickListener{
+        void onClick(int position);
+        void onLongClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
+        this.onItemClickListener = onItemClickListener;
     }
 }
